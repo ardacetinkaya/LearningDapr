@@ -1,0 +1,48 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.31112.23
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DaprFrontEnd", "DaprFrontEnd\DaprFrontEnd.csproj", "{187B21BF-2ED6-4EB2-B0AA-56EAE2E0E879}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DaprBackEnd", "DaprBackEnd\DaprBackEnd.csproj", "{FC19CD16-1DFD-4B33-A892-3816294DC6CA}"
+EndProject
+Project("{E53339B2-1760-4266-BCC7-CA923CBCF16C}") = "docker-compose", "docker-compose.dcproj", "{0304730A-455F-4A0F-992F-AC86AE87737D}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DaprWorker", "DaprWorker\DaprWorker.csproj", "{451174F4-A911-4DC9-B31E-7DB7AE4AF70E}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Components", "Components", "{75CFBD31-7E3A-4AB2-800A-A5C179324CBD}"
+	ProjectSection(SolutionItems) = preProject
+		components-compose\statestore.yaml = components-compose\statestore.yaml
+	EndProjectSection
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{187B21BF-2ED6-4EB2-B0AA-56EAE2E0E879}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{187B21BF-2ED6-4EB2-B0AA-56EAE2E0E879}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{187B21BF-2ED6-4EB2-B0AA-56EAE2E0E879}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{187B21BF-2ED6-4EB2-B0AA-56EAE2E0E879}.Release|Any CPU.Build.0 = Release|Any CPU
+		{FC19CD16-1DFD-4B33-A892-3816294DC6CA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FC19CD16-1DFD-4B33-A892-3816294DC6CA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FC19CD16-1DFD-4B33-A892-3816294DC6CA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FC19CD16-1DFD-4B33-A892-3816294DC6CA}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0304730A-455F-4A0F-992F-AC86AE87737D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0304730A-455F-4A0F-992F-AC86AE87737D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0304730A-455F-4A0F-992F-AC86AE87737D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0304730A-455F-4A0F-992F-AC86AE87737D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{451174F4-A911-4DC9-B31E-7DB7AE4AF70E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{451174F4-A911-4DC9-B31E-7DB7AE4AF70E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{451174F4-A911-4DC9-B31E-7DB7AE4AF70E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{451174F4-A911-4DC9-B31E-7DB7AE4AF70E}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {528B2C0B-61CE-4CF0-98D8-4338CE77DA29}
+	EndGlobalSection
+EndGlobal
