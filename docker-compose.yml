@@ -34,6 +34,8 @@ services:
   daprbackend-dapr:
     image: "daprio/daprd:latest"
     command: [ "./daprd", "-app-id", "daprbackend", "-app-port", "80", "-components-path","/components" ]
+    volumes:
+      - ./components-compose/:/components
     depends_on:
       - daprfrontend
     network_mode: "service:daprbackend"

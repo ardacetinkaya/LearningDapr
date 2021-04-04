@@ -29,8 +29,10 @@ namespace DaprFrontEnd.Pages
 
         public async Task<IActionResult> OnPostClick()
         {
-            var data = new WeatherData { Temprature = 20 };
-            await _daprClient.PublishEventAsync<WeatherData>("pubsub", "weather", data);
+            var data = new WeatherData { Temprature = 25 };
+            
+            await _daprClient.InvokeMethodAsync<WeatherData>(HttpMethod.Post, "daprbackend", "weatherforecast", data);
+
             return RedirectToPage();
         }
     }

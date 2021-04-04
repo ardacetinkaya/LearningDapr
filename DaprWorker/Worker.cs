@@ -57,12 +57,16 @@ namespace DaprWorker
                     {
                         _count += 1;
                         _logger.LogInformation(args.Tweet.Text);
+
+                        //TODO:Make logical
+                        var data = new WeatherData { Temprature = 23 };
+                        await _daprClient.PublishEventAsync<WeatherData>("pubsub", "weather", data);
+
+
                         await _daprClient.SaveStateAsync<long>(STORENAME, KEY, _count);
                     }
 
-                    //TODO:Make logical
-                    var data = new WeatherData { Temprature = 23 };
-                    await _daprClient.PublishEventAsync<WeatherData>("pubsub", "weather", data);
+
                 };
 
                 await stream.StartMatchingAnyConditionAsync();
