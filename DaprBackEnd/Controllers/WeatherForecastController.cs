@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Dapr;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
@@ -31,9 +32,18 @@ namespace DaprBackEnd.Controllers
             {
                 Date = DateTime.Now.AddDays(index),
                 TemperatureC = rng.Next(-20, 55),
-                Summary = Summaries[rng.Next(Summaries.Length)]
+                Summary = $"{Summaries[rng.Next(Summaries.Length)]}"
             })
             .ToArray();
+        }
+
+        [Topic("pubsub", "weather")]
+        [HttpPost]
+        [Route("weatherforefast")]
+        public async Task<IActionResult> Forecast([FromBody] WeatherData weather)
+        {
+            _logger.LogInformation($"WeatherForecast is processed with value: {weather.Temprature}");
+            return Ok();
         }
     }
 }

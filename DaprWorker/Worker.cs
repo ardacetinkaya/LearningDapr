@@ -30,22 +30,6 @@ namespace DaprWorker
 
             _daprClient = new DaprClientBuilder().Build();
 
-            //var consumerOnlyCredentials = new ConsumerOnlyCredentials(_configuration["TwitterClient:ConsumerKey"],
-            //    _configuration["TwitterClient:ConsumerSecret"])
-            //{
-            //    BearerToken = _configuration["TwitterClient:BearerToken"]
-            //};
-
-            var consumerOnlyCredentials = new ConsumerOnlyCredentials(_configuration["TwitterClient:ConsumerKey"],
-                _configuration["TwitterClient:ConsumerSecret"]);
-            var appClientWithoutBearer = new TwitterClient(consumerOnlyCredentials);
-
-            var bearerToken = appClientWithoutBearer.Auth.CreateBearerTokenAsync().Result;
-            var appCredentials1 = new ConsumerOnlyCredentials(_configuration["TwitterClient:ConsumerKey"],
-                _configuration["TwitterClient:ConsumerSecret"])
-            {
-                BearerToken = bearerToken
-            };
             var appCredentials = new TwitterCredentials(_configuration["TwitterClient:ConsumerKey"],
                 _configuration["TwitterClient:ConsumerSecret"],
                 _configuration["TwitterClient:AccessToken"],
@@ -65,17 +49,25 @@ namespace DaprWorker
 
                 var stream = _appClient.Streams.CreateFilteredStream();
                 stream.AddTrack("dapr");
-                stream.MatchingTweetReceived += (sender, args) =>
+                stream.AddTrack("dotnet");
+                stream.AddTrack("microservices");
+                stream.MatchingTweetReceived += async (sender, args) =>
                 {
                     if (!args.Tweet.IsRetweet)
                     {
                         _count += 1;
                         _logger.LogInformation(args.Tweet.Text);
-                        _daprClient.SaveStateAsync<long>(STORENAME, KEY, _count);
+                        await _daprClient.SaveStateAsync<long>(STORENAME, KEY, _count);
                     }
+
+                    //TODO:Make logical
+                    var data = new WeatherData { Temprature = 23 };
+                    await _daprClient.PublishEventAsync<WeatherData>("pubsub", "weather", data);
                 };
 
                 await stream.StartMatchingAnyConditionAsync();
+
+
 
             }
             catch (Exception ex)

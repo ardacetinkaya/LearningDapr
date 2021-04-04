@@ -13,6 +13,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DaprWorker", "DaprWorker\Da
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Components", "Components", "{75CFBD31-7E3A-4AB2-800A-A5C179324CBD}"
 	ProjectSection(SolutionItems) = preProject
+		components-compose\pubsub.yaml = components-compose\pubsub.yaml
 		components-compose\statestore.yaml = components-compose\statestore.yaml
 	EndProjectSection
 EndProject

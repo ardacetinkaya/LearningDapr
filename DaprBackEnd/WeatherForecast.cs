@@ -12,4 +12,9 @@ namespace DaprBackEnd
 
         public string Summary { get; set; }
     }
+
+    public class WeatherData
+    {
+        public double Temprature { get; set; }
+    }
 }

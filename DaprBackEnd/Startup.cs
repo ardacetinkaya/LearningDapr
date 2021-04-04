@@ -27,7 +27,7 @@ namespace DaprBackEnd
         public void ConfigureServices(IServiceCollection services)
         {
 
-            services.AddControllers();
+            services.AddControllers().AddDapr();
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "DaprBackEnd", Version = "v1" });
@@ -50,8 +50,11 @@ namespace DaprBackEnd
 
             app.UseAuthorization();
 
+            app.UseCloudEvents();
+
             app.UseEndpoints(endpoints =>
             {
+                endpoints.MapSubscribeHandler();
                 endpoints.MapControllers();
             });
         }
