@@ -39,7 +39,7 @@ namespace DaprBackEnd.Controllers
 
         [Topic("pubsub", "weather")]
         [HttpPost]
-        [Route("weatherforefast")]
+        [Route("temprature")]
         public async Task<IActionResult> Forecast([FromBody] WeatherData weather)
         {
             _logger.LogInformation($"WeatherForecast is processed with value: {weather.Temprature}");
