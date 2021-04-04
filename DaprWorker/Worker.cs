@@ -1,3 +1,4 @@
+using Dapr;
 using Dapr.Client;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Hosting;
@@ -15,13 +16,17 @@ namespace DaprWorker
     public class Worker : BackgroundService
     {
         private const string STORENAME = "statestore";
-        private const string KEY = "tweetcount";
+
+        private const string KEY_DAPR = "dapr";
+        private const string KEY_MICROSERVICES = "microservices";
+        private const string KEY_DOTNET = "dotnet";
+
         private readonly ILogger<Worker> _logger;
         private readonly TwitterClient _appClient;
         private readonly DaprClient _daprClient;
         private readonly IConfiguration _configuration;
 
-        private long _count = 0;
+        private readonly string[] _trackKeyWords = new string[] { KEY_DAPR, KEY_DOTNET, KEY_MICROSERVICES };
 
         public Worker(ILogger<Worker> logger, IConfiguration configuration)
         {
@@ -34,8 +39,8 @@ namespace DaprWorker
                 _configuration["TwitterClient:ConsumerSecret"],
                 _configuration["TwitterClient:AccessToken"],
                 _configuration["TwitterClient:AccessSecret"]);
-            _appClient = new TwitterClient(appCredentials);
 
+            _appClient = new TwitterClient(appCredentials);
 
         }
 
@@ -44,41 +49,49 @@ namespace DaprWorker
         {
             try
             {
-                var counter = await _daprClient.GetStateAsync<long>(STORENAME, KEY);
-                _logger.LogInformation("Current value : {value}", counter.ToString());
-
                 var stream = _appClient.Streams.CreateFilteredStream();
-                stream.AddTrack("dapr");
-                stream.AddTrack("dotnet");
-                stream.AddTrack("microservices");
+
+                foreach (var item in _trackKeyWords)
+                {
+                    stream.AddTrack(item);
+                }
+
                 stream.MatchingTweetReceived += async (sender, args) =>
                 {
                     if (!args.Tweet.IsRetweet)
                     {
-                        _count += 1;
                         _logger.LogInformation(args.Tweet.Text);
+
+                        foreach (var item in _trackKeyWords)
+                        {
+                            if (args.MatchingTracks.Contains(item))
+                            {
+                                var count = await _daprClient.GetStateAsync<long>(STORENAME, item);
+                                count += 1;
+                                await _daprClient.SaveStateAsync<long>(STORENAME, item, count);
+                            }
+                        }
 
                         //TODO:Make logical
                         var data = new WeatherData { Temprature = 23 };
                         await _daprClient.PublishEventAsync<WeatherData>("pubsub", "weather", data);
 
-
-                        await _daprClient.SaveStateAsync<long>(STORENAME, KEY, _count);
                     }
-
-
                 };
-
                 await stream.StartMatchingAnyConditionAsync();
-
-
-
+            }
+            catch (DaprException dex)
+            {
+                _logger.LogError(dex, dex.Message);
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex.Message);
+                _logger.LogError(ex,ex.Message);
             }
+            finally
+            {
 
+            }
         }
     }
 }
