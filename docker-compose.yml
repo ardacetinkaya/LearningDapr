@@ -8,12 +8,17 @@ services:
       dockerfile: DaprFrontEnd/Dockerfile
     ports:
       - "50000:50001"
+    depends_on:
+      - redis
 
   daprfrontend-dapr:
     image: "daprio/daprd:latest"
-    command: [ "./daprd", "-app-id", "daprfrontend", "-app-port", "80" ]
+    command: [ "./daprd", "-app-id", "daprfrontend", "-app-port", "80", "-components-path","/components" ]
+    volumes:
+      - ./components-compose/:/components
     depends_on:
       - daprfrontend
+
     network_mode: "service:daprfrontend"
 
   daprbackend:

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Net.Http;
 using System.Threading.Tasks;
 using Dapr.Client;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 
 namespace DaprFrontEnd.Pages
@@ -24,6 +25,13 @@ namespace DaprFrontEnd.Pages
                 "weatherforecast");
 
             ViewData["WeatherForecastData"] = forecasts;
+        }
+
+        public async Task<IActionResult> OnPostClick()
+        {
+            var data = new WeatherData { Temprature = 20 };
+            await _daprClient.PublishEventAsync<WeatherData>("pubsub", "weather", data);
+            return RedirectToPage();
         }
     }
 }
