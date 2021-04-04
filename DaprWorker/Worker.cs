@@ -30,9 +30,28 @@ namespace DaprWorker
 
             _daprClient = new DaprClientBuilder().Build();
 
+            //var consumerOnlyCredentials = new ConsumerOnlyCredentials(_configuration["TwitterClient:ConsumerKey"],
+            //    _configuration["TwitterClient:ConsumerSecret"])
+            //{
+            //    BearerToken = _configuration["TwitterClient:BearerToken"]
+            //};
+
             var consumerOnlyCredentials = new ConsumerOnlyCredentials(_configuration["TwitterClient:ConsumerKey"],
                 _configuration["TwitterClient:ConsumerSecret"]);
-            _appClient = new TwitterClient(consumerOnlyCredentials);
+            var appClientWithoutBearer = new TwitterClient(consumerOnlyCredentials);
+
+            var bearerToken = appClientWithoutBearer.Auth.CreateBearerTokenAsync().Result;
+            var appCredentials1 = new ConsumerOnlyCredentials(_configuration["TwitterClient:ConsumerKey"],
+                _configuration["TwitterClient:ConsumerSecret"])
+            {
+                BearerToken = bearerToken
+            };
+            var appCredentials = new TwitterCredentials(_configuration["TwitterClient:ConsumerKey"],
+                _configuration["TwitterClient:ConsumerSecret"],
+                _configuration["TwitterClient:AccessToken"],
+                _configuration["TwitterClient:AccessSecret"]);
+            _appClient = new TwitterClient(appCredentials);
+
 
         }
 
@@ -41,13 +60,22 @@ namespace DaprWorker
         {
             try
             {
-                var counter = await _daprClient.GetStateAsync<int>(STORENAME, KEY);
+                var counter = await _daprClient.GetStateAsync<long>(STORENAME, KEY);
                 _logger.LogInformation("Current value : {value}", counter.ToString());
 
-                Tweetinvi.TweetinviEvents.SubscribeToClientEvents(_appClient);
-                await _appClient.Auth.InitializeClientBearerTokenAsync();
-                var authenticatedUser = await _appClient.Users.GetAuthenticatedUserAsync();
-                _logger.LogInformation(authenticatedUser.Name);
+                var stream = _appClient.Streams.CreateFilteredStream();
+                stream.AddTrack("dapr");
+                stream.MatchingTweetReceived += (sender, args) =>
+                {
+                    if (!args.Tweet.IsRetweet)
+                    {
+                        _count += 1;
+                        _logger.LogInformation(args.Tweet.Text);
+                        _daprClient.SaveStateAsync<long>(STORENAME, KEY, _count);
+                    }
+                };
+
+                await stream.StartMatchingAnyConditionAsync();
 
             }
             catch (Exception ex)
